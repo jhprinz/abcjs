@@ -2,6 +2,8 @@ var RelativeElement = require('../abc_relative_element');
 var spacing = require('../abc_spacing');
 var getBarYAt = require('./getBarYAt');
 
+const DEFAULT_STEM_WIDTH = 1.0;
+
 var layoutBeam = function(beam) {
 	if (beam.elems.length === 0 || beam.allrests) return;
 
@@ -75,9 +77,9 @@ function calcXPos(asc, firstElement, lastElement) {
 	var starthead = firstElement.heads[asc ? 0 : firstElement.heads.length - 1];
 	var endhead = lastElement.heads[asc ? 0 : lastElement.heads.length - 1];
 	var startX = starthead.x;
-	if (asc) startX += starthead.w - 0.6;
+	if (asc) startX += starthead.w - DEFAULT_STEM_WIDTH;
 	var endX = endhead.x;
-	endX += (asc) ? endhead.w : 0.6;
+	endX += (asc) ? endhead.w : DEFAULT_STEM_WIDTH;
 	return [ startX, endX ];
 }
 
@@ -118,7 +120,7 @@ function createStems(elems, asc, beam, dy, mainNote) {
 		var dx = asc ? furthestHead.w : 0; // down-pointing stems start on the left side of the note, up-pointing stems start on the right side, so we offset by the note width.
 		var x = furthestHead.x + dx; // this is now the actual x location in pixels.
 		var bary = getBarYAt(beam.startX, beam.startY, beam.endX, beam.endY, x);
-		var lineWidth = (asc) ? -0.6 : 0.6;
+		var lineWidth = (asc) ? -DEFAULT_STEM_WIDTH : DEFAULT_STEM_WIDTH;
 		if (!asc)
 			bary -= (dy / 2) / spacing.STEP;	// TODO-PER: This is just a fudge factor so the down-pointing stems don't overlap.
 		if (isGrace)
@@ -162,7 +164,7 @@ function createAdditionalBeams(elems, asc, beam, isGrace, dy) {
 				auxBeams[index].single = false;
 			} else {
 				auxBeams[index] = {
-					x: x + ((asc) ? -0.6 : 0), y: bary + sy * (index + 1),
+					x: x + ((asc) ? - DEFAULT_STEM_WIDTH : 0), y: bary + sy * (index + 1),
 					durlog: durlog, single: true
 				};
 			}
